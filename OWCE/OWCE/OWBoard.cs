@@ -1,4 +1,5 @@
-﻿using System;
+using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -12,13 +13,11 @@ using System.Text.Json;
 using OWCE.Protobuf;
 //using Plugin.Geolocator;
 //using Plugin.Geolocator.Abstractions;
-using Xamarin.Essentials;
-using Xamarin.Forms;
 using System.Collections.ObjectModel;
 using OWCE.Models;
 using OWCE.Network;
 using OWCE.DependencyInterfaces;
-using Rg.Plugins.Popup.Services;
+using Mopups.Services;
 using MvvmHelpers;
 using OWCE.PropertyChangeHandlers;
 
@@ -557,7 +556,7 @@ namespace OWCE
 
         public OWBoard(IOWBLE owble, OWBaseBoard baseBoard) : base(baseBoard)
         {
-            MessagingCenter.Subscribe<App>(this, App.UnitDisplayUpdatedKey, (app) =>
+            WeakReferenceMessenger.Default.Register<UnitDisplayUpdatedMessage>(this, (recipient, message) =>
             {
                 OnPropertyChanged(nameof(RPM));
                 OnPropertyChanged(nameof(LifetimeOdometer));
@@ -783,14 +782,14 @@ namespace OWCE
                     // No longer using the handshake with web connection.
                     var jumpstartAlert = new Pages.Popup.JumpstartAlert(new Command(async () =>
                     {
-                        await PopupNavigation.Instance.PopAllAsync();
+                        await MopupService.Instance.PopAllAsync();
                         if (App.Current.MainPage.Navigation.ModalStack.Count == 1 && App.Current.MainPage.Navigation.ModalStack.FirstOrDefault() is NavigationPage modalNavigationPage && modalNavigationPage.CurrentPage is Pages.BoardPage boardPage)
                         {
                             await boardPage.DisconnectAndPop();
                             return;
                         }
                     }));
-                    await PopupNavigation.Instance.PushAsync(jumpstartAlert, true);
+                    await MopupService.Instance.PushAsync(jumpstartAlert, true);
                     return;
                 }
                 else // XR 4209 and below

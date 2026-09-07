@@ -1,13 +1,12 @@
-﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using System;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace OWCE.Pages
 {
-    public class CustomNavigationPage : Xamarin.Forms.NavigationPage
+    public class CustomNavigationPage : Microsoft.Maui.Controls.NavigationPage
     {
-        public CustomNavigationPage(Xamarin.Forms.Page root) : base(root)
+        public CustomNavigationPage(Microsoft.Maui.Controls.Page root) : base(root)
         {
             On<iOS>().SetHideNavigationBarSeparator(true);
 
@@ -27,7 +26,7 @@ namespace OWCE.Pages
 
             /*
             var oldBarBackgroundColor = BarBackgroundColor;
-            BarBackgroundColor = Color.Beige;
+            BarBackgroundColor = Colors.Beige;
             BarBackgroundColor = oldBarBackgroundColor;
             */
         }

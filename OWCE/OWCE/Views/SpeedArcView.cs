@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using SkiaSharp;
-using SkiaSharp.Views.Forms;
-using Xamarin.Forms;
+using SkiaSharp.Views.Maui;
+using SkiaSharp.Views.Maui.Controls;
 
 namespace OWCE.Views
 {
@@ -79,7 +79,7 @@ namespace OWCE.Views
             _arcPaint = new SKPaint();
             _arcPaint.Color = new SKColor(0, 0, 0, 31); // Black with 12% alpha
 
-            _displayScale = (float)Xamarin.Essentials.DeviceDisplay.MainDisplayInfo.Density;
+            _displayScale = (float)DeviceDisplay.MainDisplayInfo.Density;
             //_circleRadius = (_displayScale * 278) * 0.5f;
             //_startAngle = (float)(Math.PI / 180) * 270;
             //_endAngle = (float)(Math.PI / 180) * 13;
@@ -188,7 +188,7 @@ namespace OWCE.Views
             {
                 _currentSweepAngle = (float)v;
                 InvalidateSurface();
-                //Device.BeginInvokeOnMainThread(InvalidateSurface);
+                //MainThread.BeginInvokeOnMainThread(InvalidateSurface);
             }, oldSweepAngle, targetSweepAngle);
 
             animation.Commit(this, "SimpleAnimation", 16, 250, Easing.Linear, (a, b) =>

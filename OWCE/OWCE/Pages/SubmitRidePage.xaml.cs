@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,10 +15,8 @@ using OWCE.Network;
 using OWCE.Pages.Popup;
 using OWCE.Protobuf;
 using OWCE.Views;
-using Rg.Plugins.Popup.Services;
-using Xamarin.CommunityToolkit.ObjectModel;
-using Xamarin.Essentials;
-using Xamarin.Forms;
+using Mopups.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace OWCE.Pages
 {
@@ -69,7 +67,7 @@ namespace OWCE.Pages
 
             var cancellationTokenSource = new CancellationTokenSource();
 
-            var uploadingAlert = new ProgressAlert(new AsyncCommand(async () =>
+            var uploadingAlert = new ProgressAlert(new AsyncRelayCommand(async () =>
             {
                 if (cancellationTokenSource.IsCancellationRequested == false)
                 {
@@ -78,12 +76,12 @@ namespace OWCE.Pages
             }));
 
 
-            await PopupNavigation.Instance.PushAsync(uploadingAlert, true);
+            await MopupService.Instance.PushAsync(uploadingAlert, true);
 
             var prepareResult = await Task.Run(() => PrepareData(filename, tempFilename, cancellationTokenSource));
             if (prepareResult == false)
             {
-                await PopupNavigation.Instance.PopAsync();
+                await MopupService.Instance.PopAsync();
 
                 if (cancellationTokenSource.IsCancellationRequested == false)
                 {
@@ -104,7 +102,7 @@ namespace OWCE.Pages
                     var rawResponse = await httpClient.PostAsJsonAsync<SubmitRideRequest>($"https://{App.OWCEApiServer}/v1/ride/submit", submitRideRequest, cancellationTokenSource.Token);
                     if (rawResponse.IsSuccessStatusCode == false)
                     {
-                        await PopupNavigation.Instance.PopAsync();
+                        await MopupService.Instance.PopAsync();
                         await DisplayAlert("Error", "Could not upload ride at this time. Please try again later. (ER001)", "Okay");
                         return;
                     }
@@ -112,7 +110,7 @@ namespace OWCE.Pages
                     var response = await rawResponse.Content.ReadFromJsonAsync<SubmitRideResponse>();
                     if (response == null)
                     {
-                        await PopupNavigation.Instance.PopAsync();
+                        await MopupService.Instance.PopAsync();
                         await DisplayAlert("Error", "Could not upload ride at this time. Please try again later. (ER002)", "Okay");
                         return;
                     }
@@ -134,7 +132,7 @@ namespace OWCE.Pages
                             var request = new HttpRequestMessage(HttpMethod.Put, response.UploadUrl) { Content = streamContent };
                             var putResponse = await httpClient.SendAsync(request, new CancellationToken());
 
-                            await PopupNavigation.Instance.PopAsync();
+                            await MopupService.Instance.PopAsync();
 
                             if (putResponse.IsSuccessStatusCode == false)
                             {
@@ -150,11 +148,11 @@ namespace OWCE.Pages
                 }
                 catch (Exception) when (cancellationTokenSource.IsCancellationRequested)
                 {
-                    await PopupNavigation.Instance.PopAsync();
+                    await MopupService.Instance.PopAsync();
                 }
                 catch (Exception err)
                 {
-                    await PopupNavigation.Instance.PopAsync();
+                    await MopupService.Instance.PopAsync();
                     await DisplayAlert("Error", "Could not upload ride at this time. Please try again later. (ER003)", "Okay");
                     System.Diagnostics.Debug.WriteLine($"SubmitRide Error: {err.Message}");
                 }
@@ -183,12 +181,12 @@ namespace OWCE.Pages
             }), "Preparing Data");
 
 
-            await PopupNavigation.Instance.PushAsync(preparingAlert, true);
+            await MopupService.Instance.PushAsync(preparingAlert, true);
 
             var prepareResult = await Task.Run<bool>(() => { return PrepareData(filename, tempFilename, cancellationTokenSource); });
             if (prepareResult == false)
             {
-                await PopupNavigation.Instance.PopAsync();
+                await MopupService.Instance.PopAsync();
 
                 if (cancellationTokenSource.IsCancellationRequested)
                 {
@@ -201,13 +199,13 @@ namespace OWCE.Pages
 
             if (cancellationTokenSource.IsCancellationRequested)
             {
-                await PopupNavigation.Instance.PopAsync();
+                await MopupService.Instance.PopAsync();
                 return;
             }
 
             await Task.WhenAll(
                 Navigation.PushModalAsync(new CustomNavigationPage(new ViewRawRideDataPage(model.GetSubmitRideRequest(), tempFilename))),
-                PopupNavigation.Instance.PopAsync()
+                MopupService.Instance.PopAsync()
             );
         }
 

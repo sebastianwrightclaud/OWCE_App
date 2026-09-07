@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using OWCE.Converters;
 using OWCE.DependencyInterfaces;
-using Xamarin.Forms;
 
 namespace OWCE.PropertyChangeHandlers
 {

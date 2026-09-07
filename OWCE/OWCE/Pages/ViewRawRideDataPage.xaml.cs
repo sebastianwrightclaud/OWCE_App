@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
@@ -13,11 +13,9 @@ using OWCE.Network;
 using OWCE.Pages.Popup;
 using OWCE.Protobuf;
 using OWCE.Views;
-using Rg.Plugins.Popup.Services;
-using Xamarin.CommunityToolkit.ObjectModel;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-using static Xamarin.Essentials.AppleSignInAuthenticator;
+using Mopups.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.Authentication;
 
 namespace OWCE.Pages
 {	
@@ -105,14 +103,14 @@ namespace OWCE.Pages
 
             var cancellationTokenSource = new CancellationTokenSource();
 
-            var exportingPopup = new ProgressAlert(new AsyncCommand(async () =>
+            var exportingPopup = new ProgressAlert(new AsyncRelayCommand(async () =>
             {
                 if (cancellationTokenSource.IsCancellationRequested == false)
                 {
                     cancellationTokenSource.Cancel();
                 }
             }), "Exporting");
-            await PopupNavigation.Instance.PushAsync(exportingPopup, true);
+            await MopupService.Instance.PushAsync(exportingPopup, true);
 
             var taskCompletionSource = new TaskCompletionSource<bool>();
 
@@ -187,9 +185,9 @@ namespace OWCE.Pages
                             }
                         }
 
-                        Device.BeginInvokeOnMainThread(async () =>
+                        MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            await PopupNavigation.Instance.PopAsync();
+                            await MopupService.Instance.PopAsync();
 
                             if (cancellationTokenSource.IsCancellationRequested)
                             {
@@ -229,9 +227,9 @@ namespace OWCE.Pages
                             }
                         }
 
-                        Device.BeginInvokeOnMainThread(async () =>
+                        MainThread.BeginInvokeOnMainThread(async () =>
                         {
-                            await PopupNavigation.Instance.PopAsync();
+                            await MopupService.Instance.PopAsync();
 
 
                             if (cancellationTokenSource.IsCancellationRequested)

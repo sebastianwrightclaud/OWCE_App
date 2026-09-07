@@ -1,12 +1,12 @@
-﻿using System;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Rg.Plugins.Popup.Pages;
-using Rg.Plugins.Popup.Services;
-using Xamarin.CommunityToolkit.ObjectModel;
-using Xamarin.Forms;
-using Xamarin.Forms.PlatformConfiguration;
-using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using Mopups.Pages;
+using Mopups.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace OWCE.Pages.Popup
 {
@@ -15,14 +15,14 @@ namespace OWCE.Pages.Popup
         static SideMenuPopup _instance;
         public static SideMenuPopup Instance => _instance ??= new SideMenuPopup();
 
-        IAsyncCommand _closeCommand;
-        public IAsyncCommand CloseCommand => _closeCommand ??= new AsyncCommand(CloseCommand_Clicked, allowsMultipleExecutions: false);
+        IAsyncRelayCommand _closeCommand;
+        public IAsyncRelayCommand CloseCommand => _closeCommand ??= new AsyncRelayCommand(CloseCommand_Clicked);
 
-        IAsyncCommand<Grid> _aboutCommand;
-        public IAsyncCommand<Grid> AboutCommand => _aboutCommand ??= new AsyncCommand<Grid>(async (sender) => await AboutCommand_Clicked(sender), allowsMultipleExecutions: false);
+        IAsyncRelayCommand<Grid> _aboutCommand;
+        public IAsyncRelayCommand<Grid> AboutCommand => _aboutCommand ??= new AsyncRelayCommand<Grid>(async (sender) => await AboutCommand_Clicked(sender));
 
-        IAsyncCommand<Grid> _settingsCommand;
-        public IAsyncCommand<Grid> SettingsCommand => _settingsCommand ??= new AsyncCommand<Grid>(async (sender) => await SettingsCommand_Clicked(sender), allowsMultipleExecutions: false);
+        IAsyncRelayCommand<Grid> _settingsCommand;
+        public IAsyncRelayCommand<Grid> SettingsCommand => _settingsCommand ??= new AsyncRelayCommand<Grid>(async (sender) => await SettingsCommand_Clicked(sender));
 
         View _pageSpecificSideMenu = null;
         public View PageSpecificSideMenu {
@@ -51,7 +51,7 @@ namespace OWCE.Pages.Popup
         {
             InitializeComponent();
 
-            if (Device.RuntimePlatform == Device.iOS)
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
                 HasSystemPadding = false;
             }
@@ -61,7 +61,7 @@ namespace OWCE.Pages.Popup
 
         internal async Task CloseCommand_Clicked()
         {
-            await PopupNavigation.Instance.PopAsync(true);
+            await MopupService.Instance.PopAsync(true);
         }
 
         async Task AboutCommand_Clicked(Grid sender)
@@ -71,7 +71,7 @@ namespace OWCE.Pages.Popup
             await Task.WhenAll(
                 sender.FadeTo(1f),
                 App.Current.MainPage.Navigation.PushModalAsync(new CustomNavigationPage(new AboutPage())),
-                PopupNavigation.Instance.RemovePageAsync(this)
+                MopupService.Instance.RemovePageAsync(this)
             );
         }
 
@@ -82,7 +82,7 @@ namespace OWCE.Pages.Popup
             await Task.WhenAll(
                 sender.FadeTo(1f),
                 App.Current.MainPage.Navigation.PushModalAsync(new CustomNavigationPage(new AppSettingsPage())),
-                PopupNavigation.Instance.RemovePageAsync(this)
+                MopupService.Instance.RemovePageAsync(this)
             );
         }
 
@@ -95,7 +95,7 @@ namespace OWCE.Pages.Popup
 
             if (Content is Grid grid)
             {
-                if (Device.RuntimePlatform == Device.iOS)
+                if (DeviceInfo.Platform == DevicePlatform.iOS)
                 {
                     var safeInsets = On<iOS>().SafeAreaInsets();
                     grid.Padding = new Thickness(0, safeInsets.Top, 0, safeInsets.Bottom);

@@ -7,7 +7,7 @@ using OWCE.Network;
 
 namespace OWCE.Pages
 {
-	public class ViewRawRideDataModel : Xamarin.CommunityToolkit.ObjectModel.ObservableObject
+	public class ViewRawRideDataModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
         string dataFile = String.Empty;
         public string DataFile

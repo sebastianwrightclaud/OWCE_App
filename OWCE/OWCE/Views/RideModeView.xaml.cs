@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Xamarin.CommunityToolkit.UI.Views;
-using Xamarin.Forms;
+using CommunityToolkit.Maui.Views;
 
 namespace OWCE.Views
 {
@@ -90,11 +89,11 @@ namespace OWCE.Views
             {
                 if (ExpanderView.IsExpanded)
                 {
-                    ExpanderArrow.RotateTo(180, ExpanderView.ExpandAnimationLength, ExpanderView.ExpandAnimationEasing);
+                    ExpanderArrow.RotateTo(180, 200, Easing.CubicIn);
                 }
                 else
                 {
-                    ExpanderArrow.RotateTo(0, ExpanderView.CollapseAnimationLength, ExpanderView.CollapseAnimationEasing);
+                    ExpanderArrow.RotateTo(0, 200, Easing.CubicOut);
                 }
             }
         }

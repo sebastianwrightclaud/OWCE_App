@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Xamarin.Forms;
 
 namespace OWCE.Views
 {
@@ -159,7 +158,7 @@ namespace OWCE.Views
                 _label = new Label()
                 {
                     FontSize = 18,
-                    TextColor = Color.Black,
+                    TextColor = Colors.Black,
                     VerticalOptions = LayoutOptions.Center,
                     HorizontalOptions = LayoutOptions.Center,
                 };

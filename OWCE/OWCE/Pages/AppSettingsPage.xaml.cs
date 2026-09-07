@@ -1,9 +1,9 @@
-﻿using System;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
-using Xamarin.CommunityToolkit.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using OWCE.Views;
-using Xamarin.Forms;
-using Xamarin.Essentials;
 
 namespace OWCE.Pages
 {
@@ -23,10 +23,10 @@ namespace OWCE.Pages
             {
                 Position = CustomToolbarItemPosition.Left,
                 Text = "Cancel",
-                Command = new AsyncCommand(async () =>
+                Command = new AsyncRelayCommand(async () =>
                 {
                     await Navigation.PopModalAsync();
-                }, allowsMultipleExecutions: false),
+                }),
             });
 
 
@@ -34,17 +34,17 @@ namespace OWCE.Pages
             {
                 Position = CustomToolbarItemPosition.Right,
                 Text = "Save",
-                Command = new AsyncCommand(async () =>
+                Command = new AsyncRelayCommand(async () =>
                 {
                     App.Current.MetricDisplay = MetricDisplay;
 
                     Preferences.Set("metric_display", MetricDisplay);
                     Preferences.Set("auto_ride_recording", AutoRideRecording);
 
-                    MessagingCenter.Send<App>(App.Current, App.UnitDisplayUpdatedKey);
+                    WeakReferenceMessenger.Default.Send(new UnitDisplayUpdatedMessage());
 
                     await Navigation.PopModalAsync();
-                }, allowsMultipleExecutions: false),
+                }),
             });
 
             BindingContext = this;
