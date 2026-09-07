@@ -1,0 +1,197 @@
+name: iOS build and TestFlight
+
+on:
+  push:
+    branches:
+      - main
+      - development
+      - 'claude/**'
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - development
+  workflow_dispatch:
+    inputs:
+      deploy_to_testflight:
+        description: 'Upload the signed build to TestFlight'
+        type: boolean
+        default: false
+      app_version:
+        description: 'Marketing version (defaults to the version in the csproj)'
+        type: string
+        required: false
+
+env:
+  DOTNET_VERSION: '10.0.x'
+  PROJECT: OWCE/OWCE/OWCE.csproj
+
+jobs:
+  # Fast sanity check of all shared code (pages, views, models) on Linux.
+  build-shared:
+    name: Shared code (net10.0)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install MAUI workloads
+        run: dotnet workload install maui-android maui-tizen
+      - name: Build
+        run: dotnet build ${{ env.PROJECT }} -f net10.0 -c Release
+
+  # Full Android head compile on Linux (Android SDK is preinstalled on the runner).
+  build-android:
+    name: Android (net10.0-android)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install MAUI workloads
+        run: dotnet workload install maui-android maui-tizen
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft'
+          java-version: '17'
+      - name: Build
+        run: dotnet build ${{ env.PROJECT }} -f net10.0-android -c Release -p:AcceptAndroidSDKLicenses=true
+
+  # Unsigned iOS build – proves the net10.0-ios head compiles with the iOS 26 SDK.
+  build-ios:
+    name: iOS (net10.0-ios, unsigned)
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install MAUI workloads
+        run: dotnet workload install maui
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          dotnet --info | head -20
+      - name: Build (device, no codesign)
+        run: >
+          dotnet build ${{ env.PROJECT }} -f net10.0-ios -c Release
+          -p:RuntimeIdentifier=ios-arm64
+          -p:EnableCodeSigning=false
+
+  # Signed build + TestFlight upload. Runs on version tags, or manually via
+  # workflow_dispatch with deploy_to_testflight=true. Requires the secrets
+  # documented in Documentation/TestFlightDeployment.md.
+  deploy-testflight:
+    name: TestFlight deploy
+    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.deploy_to_testflight)
+    needs: build-ios
+    runs-on: macos-26
+    environment: testflight
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install MAUI workloads
+        run: dotnet workload install maui
+
+      - name: Check required secrets
+        env:
+          CERT: ${{ secrets.IOS_DIST_CERT_BASE64 }}
+          PROFILE: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+          API_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+        run: |
+          missing=""
+          [ -z "$CERT" ] && missing="$missing IOS_DIST_CERT_BASE64"
+          [ -z "$PROFILE" ] && missing="$missing IOS_PROVISIONING_PROFILE_BASE64"
+          [ -z "$API_KEY" ] && missing="$missing APPSTORE_API_PRIVATE_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing – see Documentation/TestFlightDeployment.md"
+            exit 1
+          fi
+
+      - name: Import signing certificate and provisioning profile
+        env:
+          IOS_DIST_CERT_BASE64: ${{ secrets.IOS_DIST_CERT_BASE64 }}
+          IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
+          IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+        run: |
+          KEYCHAIN_PASSWORD=$(openssl rand -base64 24)
+          KEYCHAIN_PATH="$RUNNER_TEMP/build.keychain-db"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security default-keychain -s "$KEYCHAIN_PATH"
+
+          echo "$IOS_DIST_CERT_BASE64" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$KEYCHAIN_PATH" -P "$IOS_DIST_CERT_PASSWORD" -A -t cert -f pkcs12
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH" > /dev/null
+          rm "$RUNNER_TEMP/cert.p12"
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          echo "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$RUNNER_TEMP/profile.mobileprovision"
+          UUID=$(/usr/libexec/PlistBuddy -c 'Print :UUID' /dev/stdin <<< "$(security cms -D -i "$RUNNER_TEMP/profile.mobileprovision")")
+          cp "$RUNNER_TEMP/profile.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$UUID.mobileprovision"
+          cp "$RUNNER_TEMP/profile.mobileprovision" "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles/$UUID.mobileprovision"
+
+      - name: Publish signed IPA
+        env:
+          IOS_BUNDLE_ID: ${{ vars.IOS_BUNDLE_ID }}
+          IOS_CODESIGN_KEY: ${{ vars.IOS_CODESIGN_KEY }}
+          IOS_PROVISIONING_PROFILE_NAME: ${{ vars.IOS_PROVISIONING_PROFILE_NAME }}
+          APP_VERSION: ${{ inputs.app_version }}
+        run: |
+          ARGS=(
+            "${PROJECT}" -f net10.0-ios -c Release
+            -p:RuntimeIdentifier=ios-arm64
+            -p:ArchiveOnBuild=true
+            -p:ApplicationVersion=${{ github.run_number }}
+            "-p:CodesignKey=${IOS_CODESIGN_KEY:-Apple Distribution}"
+            "-p:CodesignProvision=${IOS_PROVISIONING_PROFILE_NAME}"
+          )
+          [ -n "$IOS_BUNDLE_ID" ] && ARGS+=("-p:ApplicationId=$IOS_BUNDLE_ID")
+          [ -n "$APP_VERSION" ] && ARGS+=("-p:ApplicationDisplayVersion=$APP_VERSION")
+          dotnet publish "${ARGS[@]}"
+
+          IPA=$(find OWCE/OWCE/bin/Release/net10.0-ios/ios-arm64 -name '*.ipa' | head -1)
+          if [ -z "$IPA" ]; then
+            echo "::error::No IPA produced"
+            find OWCE/OWCE/bin/Release -maxdepth 4 -type d
+            exit 1
+          fi
+          echo "IPA=$IPA" >> "$GITHUB_ENV"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OWCE-ios-ipa
+          path: ${{ env.IPA }}
+          retention-days: 30
+
+      - name: Upload to TestFlight
+        env:
+          APPSTORE_API_KEY_ID: ${{ secrets.APPSTORE_API_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_API_PRIVATE_KEY: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+        run: |
+          python3 - <<'PYEOF'
+          import json, os
+          key = os.environ['APPSTORE_API_PRIVATE_KEY']
+          with open(os.path.join(os.environ['RUNNER_TEMP'], 'asc_api_key.json'), 'w') as f:
+              json.dump({
+                  'key_id': os.environ['APPSTORE_API_KEY_ID'],
+                  'issuer_id': os.environ['APPSTORE_ISSUER_ID'],
+                  'key': key,
+                  'in_house': False,
+              }, f)
+          PYEOF
+          fastlane pilot upload \
+            --api_key_path "$RUNNER_TEMP/asc_api_key.json" \
+            --ipa "$IPA" \
+            --skip_waiting_for_build_processing true
+          rm -f "$RUNNER_TEMP/asc_api_key.json"
