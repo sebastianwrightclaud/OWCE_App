@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui;
+using Mopups.Hosting;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace OWCE
@@ -13,6 +14,7 @@ namespace OWCE
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .ConfigureMopups()
                 .UseSkiaSharp()
                 .ConfigureFonts(fonts =>
                 {

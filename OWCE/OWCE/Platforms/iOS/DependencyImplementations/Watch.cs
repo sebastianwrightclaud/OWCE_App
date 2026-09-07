@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using OWCE.DependencyInterfaces;
 using OWCE.PropertyChangeHandlers;
 using WatchConnectivity;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.iOS.DependencyImplementations.Watch))]
 
 namespace OWCE.iOS.DependencyImplementations
 {

@@ -1,11 +1,7 @@
-﻿using System;
+using System;
 using CoreBluetooth;
 
-#if __IOS__
 namespace OWCE.iOS.Extensions
-#elif __MACOS__
-namespace OWCE.MacOS.Extensions
-#endif
 {
     public static class GuidExtension
     {

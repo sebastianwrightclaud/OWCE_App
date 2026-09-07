@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using OWCE.DependencyInterfaces;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.Droid.DependencyImplementations.UserAgent))]
 
 namespace OWCE.Droid.DependencyImplementations
 {

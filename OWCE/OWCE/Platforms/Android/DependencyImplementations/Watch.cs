@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using OWCE.DependencyInterfaces;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.Droid.DependencyImplementations.Watch))]
 
 namespace OWCE.Droid.DependencyImplementations
 {

@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using OWCE.DependencyInterfaces;
-using Xamarin.Forms;
 using CoreBluetooth;
 using Foundation;
 using CoreFoundation;
@@ -11,16 +10,9 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Threading;
 
-#if __IOS__
 using UIKit;
 using OWCE.iOS.Extensions;
-[assembly: Dependency(typeof(OWCE.iOS.DependencyImplementations.OWBLE))]
 namespace OWCE.iOS.DependencyImplementations
-#elif __MACOS__
-using OWCE.MacOS.Extensions;
-[assembly: Dependency(typeof(OWCE.MacOS.DependencyImplementations.OWBLE))]
-namespace OWCE.MacOS.DependencyImplementations
-#endif
 {
     public class OWBLE : NSObject, INotifyPropertyChanged, IOWBLE, ICBCentralManagerDelegate, ICBPeripheralDelegate
     {
@@ -141,7 +133,7 @@ namespace OWCE.MacOS.DependencyImplementations
             // This will prompt the user for the "OWCE wants to use bluetooth" prompt.
             if (_centralManager == null)
             {
-                Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
+                Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() =>
                {
                    _dispatchQueue = new DispatchQueue("CBCentralManager_Scanner_Queue");
                    _centralManager = new CBCentralManager(this, _dispatchQueue); // Prompt displays here, but not a blocking call.

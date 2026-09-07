@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,10 +13,7 @@ using Android.Runtime;
 using Java.Util;
 using OWCE.DependencyInterfaces;
 using OWCE.Droid.Extensions;
-using Xamarin.Essentials;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.Droid.DependencyImplementations.OWBLE))]
 
 namespace OWCE.Droid.DependencyImplementations
 {
@@ -257,7 +254,7 @@ namespace OWCE.Droid.DependencyImplementations
                             break;
                     }
 
-                    Xamarin.Essentials.MainThread.BeginInvokeOnMainThread(() =>
+                    Microsoft.Maui.ApplicationModel.MainThread.BeginInvokeOnMainThread(() =>
                     {
                         _owble?.BLEStateChanged?.Invoke(bluetoothState);
                     });
@@ -291,9 +288,9 @@ namespace OWCE.Droid.DependencyImplementations
             /*
             _broadcastReceiver = new OWBLE_BroadcastReceiver(this);
             IntentFilter filter = new IntentFilter(BluetoothAdapter.ActionStateChanged);
-            Xamarin.Essentials.Platform.AppContext.RegisterReceiver(_broadcastReceiver, filter);
+            Microsoft.Maui.ApplicationModel.Platform.AppContext.RegisterReceiver(_broadcastReceiver, filter);
             */
-            BluetoothManager manager = Xamarin.Essentials.Platform.CurrentActivity.GetSystemService(Context.BluetoothService) as BluetoothManager;
+            BluetoothManager manager = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.GetSystemService(Context.BluetoothService) as BluetoothManager;
             _adapter = manager.Adapter;
         }
 
@@ -311,7 +308,7 @@ namespace OWCE.Droid.DependencyImplementations
             if (_adapter == null || !_adapter.IsEnabled)
             {
                 Intent enableBtIntent = new Intent(BluetoothAdapter.ActionRequestEnable);
-                Xamarin.Essentials.Platform.CurrentActivity.StartActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
+                Microsoft.Maui.ApplicationModel.Platform.CurrentActivity.StartActivityForResult(enableBtIntent, MainActivity.REQUEST_ENABLE_BT);
             }
         }
         
@@ -579,7 +576,7 @@ namespace OWCE.Droid.DependencyImplementations
             if (board.NativePeripheral is BluetoothDevice device)
             {
                 _gattCallback = new OWBLE_BluetoothGattCallback(this);
-                _bluetoothGatt = device.ConnectGatt(Xamarin.Essentials.Platform.CurrentActivity, false, _gattCallback);
+                _bluetoothGatt = device.ConnectGatt(Microsoft.Maui.ApplicationModel.Platform.CurrentActivity, false, _gattCallback);
             }
 
             return _connectTaskCompletionSource.Task;

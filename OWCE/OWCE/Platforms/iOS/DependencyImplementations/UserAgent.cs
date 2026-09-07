@@ -4,9 +4,7 @@ using CoreGraphics;
 using Foundation;
 using OWCE.DependencyInterfaces;
 using WebKit;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.iOS.DependencyImplementations.UserAgent))]
 
 namespace OWCE.iOS.DependencyImplementations
 {

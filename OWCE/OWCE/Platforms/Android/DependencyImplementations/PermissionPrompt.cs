@@ -1,11 +1,7 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using OWCE.DependencyInterfaces;
-using Plugin.Permissions;
-using Xamarin.Essentials;
-using Xamarin.Forms;
 
-[assembly: Dependency(typeof(OWCE.Droid.DependencyImplementations.PermissionPrompt))]
 
 namespace OWCE.Droid.DependencyImplementations
 {
