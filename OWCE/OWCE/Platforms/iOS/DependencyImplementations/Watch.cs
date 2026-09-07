@@ -4,7 +4,7 @@ using OWCE.PropertyChangeHandlers;
 using WatchConnectivity;
 
 
-namespace OWCE.iOS.DependencyImplementations
+namespace OWCE.Platforms.iOS.DependencyImplementations
 {
     // Implementation of IWatch on iOS.
     // Messages are received on InterfaceController.cs on the watch side.

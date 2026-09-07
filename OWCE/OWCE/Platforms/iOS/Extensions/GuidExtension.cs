@@ -1,7 +1,7 @@
 using System;
 using CoreBluetooth;
 
-namespace OWCE.iOS.Extensions
+namespace OWCE.Platforms.iOS.Extensions
 {
     public static class GuidExtension
     {

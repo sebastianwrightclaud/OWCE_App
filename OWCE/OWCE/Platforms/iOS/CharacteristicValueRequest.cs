@@ -4,7 +4,7 @@ using CoreBluetooth;
 using Foundation;
 
 
-namespace OWCE.iOS
+namespace OWCE.Platforms.iOS
 {
     public class CharacteristicValueRequest : IEquatable<CharacteristicValueRequest>
     {

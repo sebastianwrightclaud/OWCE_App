@@ -35,10 +35,10 @@ namespace OWCE
         static void RegisterPlatformServices()
         {
 #if IOS
-            DependencyService.Register<DependencyInterfaces.IOWBLE, OWCE.iOS.DependencyImplementations.OWBLE>();
-            DependencyService.Register<DependencyInterfaces.IPermissionPrompt, OWCE.iOS.DependencyImplementations.PermissionPrompt>();
-            DependencyService.Register<DependencyInterfaces.IUserAgent, OWCE.iOS.DependencyImplementations.UserAgent>();
-            DependencyService.Register<DependencyInterfaces.IWatch, OWCE.iOS.DependencyImplementations.Watch>();
+            DependencyService.Register<DependencyInterfaces.IOWBLE, OWCE.Platforms.iOS.DependencyImplementations.OWBLE>();
+            DependencyService.Register<DependencyInterfaces.IPermissionPrompt, OWCE.Platforms.iOS.DependencyImplementations.PermissionPrompt>();
+            DependencyService.Register<DependencyInterfaces.IUserAgent, OWCE.Platforms.iOS.DependencyImplementations.UserAgent>();
+            DependencyService.Register<DependencyInterfaces.IWatch, OWCE.Platforms.iOS.DependencyImplementations.Watch>();
 #elif ANDROID
             DependencyService.Register<DependencyInterfaces.IOWBLE, OWCE.Droid.DependencyImplementations.OWBLE>();
             DependencyService.Register<DependencyInterfaces.IPermissionPrompt, OWCE.Droid.DependencyImplementations.PermissionPrompt>();

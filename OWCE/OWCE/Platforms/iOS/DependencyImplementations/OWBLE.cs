@@ -11,8 +11,8 @@ using System.ComponentModel;
 using System.Threading;
 
 using UIKit;
-using OWCE.iOS.Extensions;
-namespace OWCE.iOS.DependencyImplementations
+using OWCE.Platforms.iOS.Extensions;
+namespace OWCE.Platforms.iOS.DependencyImplementations
 {
     public class OWBLE : NSObject, INotifyPropertyChanged, IOWBLE, ICBCentralManagerDelegate, ICBPeripheralDelegate
     {
@@ -141,23 +141,23 @@ namespace OWCE.iOS.DependencyImplementations
             }
             else
             {
-                if (_centralManager.State == CBCentralManagerState.PoweredOn)
+                if (_centralManager.State == CBManagerState.PoweredOn)
                 {
                     DoActualScan();
                 }
-                else if (_centralManager.State == CBCentralManagerState.PoweredOff)
+                else if (_centralManager.State == CBManagerState.PoweredOff)
                 {
                     throw new Exception("Bluetooth is currently turned off.");
                 }
-                else if (_centralManager.State == CBCentralManagerState.Unauthorized) // User has rejected authorisation.
+                else if (_centralManager.State == CBManagerState.Unauthorized) // User has rejected authorisation.
                 {
                     throw new Exception("Bluetooth permissions is disabled for OWCE.");
                 }
-                else if (_centralManager.State == CBCentralManagerState.Resetting)
+                else if (_centralManager.State == CBManagerState.Resetting)
                 {
                     throw new Exception("Bluetooth scanning is not supported on this device.");
                 }
-                else if (_centralManager.State == CBCentralManagerState.Unsupported)
+                else if (_centralManager.State == CBManagerState.Unsupported)
                 {
                     throw new Exception("Bluetooth scanning is not supported on this device.");
                 }
@@ -181,7 +181,7 @@ namespace OWCE.iOS.DependencyImplementations
                 return;
             }
 
-            if (_centralManager.State == CBCentralManagerState.PoweredOn)
+            if (_centralManager.State == CBManagerState.PoweredOn)
             {
                 _centralManager.ScanForPeripherals(new CBUUID[] { OWBoard.ServiceUUID.ToCBUUID() }, new PeripheralScanningOptions { AllowDuplicatesKey = true });
                 IsScanning = true;
@@ -449,26 +449,26 @@ namespace OWCE.iOS.DependencyImplementations
         public void UpdatedState(CBCentralManager central)
         {
             Debug.WriteLine("CBCentralManager_UpdatedState: " + central.State);
-            if (central.State == CBCentralManagerState.PoweredOn)
+            if (central.State == CBManagerState.PoweredOn)
             {
                 // Bluetooth chip is authorised and turned on, start scan.
                 DoActualScan();
             }
-            else if (central.State == CBCentralManagerState.PoweredOff)
+            else if (central.State == CBManagerState.PoweredOff)
             {
                 // User has turned off bluetooth.
                 StopScanning();
                 ErrorOccurred?.Invoke("Unable to scan for boards, bluetooth is currently disabled.");
             }
-            else if (_centralManager.State == CBCentralManagerState.Unauthorized) // User has rejected authorisation.
+            else if (_centralManager.State == CBManagerState.Unauthorized) // User has rejected authorisation.
             {
                 ErrorOccurred?.Invoke("Unable to scan for boards without granting bluetooth permissions.");
             }
-            else if (_centralManager.State == CBCentralManagerState.Resetting)
+            else if (_centralManager.State == CBManagerState.Resetting)
             {
                 ErrorOccurred?.Invoke("Could not scan for boards at this time.");
             }
-            else if (_centralManager.State == CBCentralManagerState.Unsupported)
+            else if (_centralManager.State == CBManagerState.Unsupported)
             {
                 ErrorOccurred?.Invoke("Bluetooth scanning is not supported on this device.");
             }

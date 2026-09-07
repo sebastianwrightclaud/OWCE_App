@@ -1,6 +1,6 @@
 using UIKit;
 
-namespace OWCE.iOS
+namespace OWCE.Platforms.iOS
 {
     public class Program
     {

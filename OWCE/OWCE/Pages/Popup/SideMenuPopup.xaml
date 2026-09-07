@@ -39,7 +39,7 @@
 
 
 
-        <Image Grid.Row="0" Source="menu_cancel" WidthRequest="16" HeightRequest="16" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0"><Image.Behaviors><xcte:TouchBehavior NativeAnimation="True" Command="{Binding CloseCommand}" /><xcte:IconTintColorBehavior TintColor="Black" /></Image.Behaviors></Image>
+        <Image Grid.Row="0" Source="menu_cancel" WidthRequest="16" HeightRequest="16" HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,16,0"><Image.Behaviors><xcte:TouchBehavior Command="{Binding CloseCommand}" /><xcte:IconTintColorBehavior TintColor="Black" /></Image.Behaviors></Image>
 
         <BoxView Grid.Row="1" Background="#E4E4E4" HeightRequest="1" />
 

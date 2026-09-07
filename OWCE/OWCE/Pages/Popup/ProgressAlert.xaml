@@ -33,7 +33,7 @@
                     <ActivityIndicator Grid.Column="1" IsRunning="True" Color="Black" WidthRequest="26" HeightRequest="26" VerticalOptions="Center" />
                 </Grid>
                 <Grid Grid.Row="3" BackgroundColor="White" HeightRequest="76">
-                    <Button Text="{Binding ButtonText}" Style="{StaticResource RoundButtonStyle}" Command="{Binding ActionButtonCommand}"><Button.Behaviors><xcte:TouchBehavior NativeAnimation="True" /></Button.Behaviors></Button>
+                    <Button Text="{Binding ButtonText}" Style="{StaticResource RoundButtonStyle}" Command="{Binding ActionButtonCommand}"><Button.Behaviors><xcte:TouchBehavior /></Button.Behaviors></Button>
                 </Grid>
             </Grid>
         </Border>

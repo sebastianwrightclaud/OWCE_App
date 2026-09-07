@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using OWCE.DependencyInterfaces;
 
 
-namespace OWCE.iOS.DependencyImplementations
+namespace OWCE.Platforms.iOS.DependencyImplementations
 {
     public class PermissionPrompt : IPermissionPrompt
     {

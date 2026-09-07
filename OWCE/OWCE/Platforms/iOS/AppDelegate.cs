@@ -2,7 +2,7 @@ using Foundation;
 using UIKit;
 using WatchConnectivity;
 
-namespace OWCE.iOS
+namespace OWCE.Platforms.iOS
 {
     [Register("AppDelegate")]
     public class AppDelegate : MauiUIApplicationDelegate

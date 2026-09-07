@@ -6,7 +6,7 @@ using OWCE.DependencyInterfaces;
 using WebKit;
 
 
-namespace OWCE.iOS.DependencyImplementations
+namespace OWCE.Platforms.iOS.DependencyImplementations
 {
     public class UserAgent : IUserAgent
     {

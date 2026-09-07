@@ -22,7 +22,7 @@
                     </SwipeView.RightItems>
 
                     
-                    <Grid BackgroundColor="White" RowDefinitions="Auto,Auto,1"><Grid.Behaviors><xcte:TouchBehavior NativeAnimation="true" Command="{Binding Source={RelativeSource AncestorType={x:Type pages:BaseContentPage}}, Path=RideSelectedCommand}" CommandParameter="{Binding .}" /></Grid.Behaviors>
+                    <Grid BackgroundColor="White" RowDefinitions="Auto,Auto,1"><Grid.Behaviors><xcte:TouchBehavior Command="{Binding Source={RelativeSource AncestorType={x:Type pages:BaseContentPage}}, Path=RideSelectedCommand}" CommandParameter="{Binding .}" /></Grid.Behaviors>
                         <Label Grid.Row="0" Text="{Binding Name}" Padding="8,8,8,0" FontSize="22" FontAttributes="Bold" TextColor="Black" />
                         <Label Grid.Row="1" Text="{Binding StartTime}" Padding="8,0,0,8" FontSize="16" TextColor="DarkGray" />
                         <BoxView Grid.Row="2" BackgroundColor="LightGray" />
