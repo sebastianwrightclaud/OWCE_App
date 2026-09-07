@@ -12,7 +12,7 @@ _ Pint X, all firmware
 
 NOTE: Onewheel Community Edition app is not endorsed by or affiliated with Future Motion in any way.
 
-Written in C# with [Xamarin](http://www.xamarin.com)
+Written in C# with [.NET MAUI](https://dotnet.microsoft.com/apps/maui)
 
 Open Source Project by [@beeradmoore](http://www.twitter.com/beeradmoore) 
 
@@ -22,10 +22,12 @@ Open Source Project by [@beeradmoore](http://www.twitter.com/beeradmoore)
 
 ## How to build and run this project. 
 
-Before you start, you will need to install both Visual Studio and Xamarin. If you are using Windows you will want Visual Studio 2017 ([install guide here](https://docs.microsoft.com/en-us/xamarin/cross-platform/get-started/installation/windows)) or if you are on macOS you will want Visual Studio for Mac ([install guide here](https://docs.microsoft.com/en-us/visualstudio/mac/installation)).
+The app is a .NET MAUI single project targeting .NET 10. Install the [.NET 10 SDK](https://dotnet.microsoft.com/download) and the MAUI workload (`dotnet workload install maui`), then:
 
-Using your flavor of Visual Studio, open OWCE.sln. From the platform dropdown, choose OWCE.iOS or OWCE.Android, depending on what platform you wish to build for. Then, deploy and debug your app like any other project.
+    dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-android    # Android
+    dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-ios        # iOS (requires macOS + Xcode)
 
+`-f net10.0` builds the shared code on any OS without the mobile workloads. CI builds all targets on every push (see `.github/workflows/ios.yml`), and TestFlight deployment is documented in [Documentation/TestFlightDeployment.md](Documentation/TestFlightDeployment.md).
 NOTE: Because the app depends on the Onewheels low-energy Bluetooth, it will not function correctly in a simulator/emulator. For best results, deploy to a physical device. 
 
 
