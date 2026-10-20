@@ -6,7 +6,7 @@
     xmlns:views="clr-namespace:OWCE.Views"
     x:Class="OWCE.Pages.BoardPage"
     xmlns:xctc="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:behaviors="clr-namespace:OWCE.Behaviors" xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     Title="{Binding Name}">
 
 
@@ -20,12 +20,12 @@
 
                 <Grid BackgroundColor="White" ColumnSpacing="0" RowSpacing="8" VerticalOptions="FillAndExpand" RowDefinitions="Auto,1,Auto,1,*,Auto">
                     
-                    <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="60,*" ColumnSpacing="0" IsVisible="{Binding Board.IsRecordingRide, Converter={StaticResource InvertedBoolConverter}}"><Grid.Behaviors><xcte:TouchBehavior Command="{Binding StartRecordRideCommand}" /></Grid.Behaviors>
+                    <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="60,*" ColumnSpacing="0" IsVisible="{Binding Board.IsRecordingRide, Converter={StaticResource InvertedBoolConverter}}"><Grid.Behaviors><behaviors:TouchBehavior Command="{Binding StartRecordRideCommand}" /></Grid.Behaviors>
                         <Image Grid.Row="0" Grid.Column="0" Source="settings_start_recording" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" />
                         <Label Grid.Row="0" Grid.Column="1" Text="Record ride" TextColor="Black" FontSize="18"/>
                     </Grid>
                                         
-                    <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="60,*" ColumnSpacing="0" IsVisible="{Binding Board.IsRecordingRide}"><Grid.Behaviors><xcte:TouchBehavior Command="{Binding StopRecordRideCommand}" /></Grid.Behaviors>
+                    <Grid Grid.Row="0" RowDefinitions="Auto" ColumnDefinitions="60,*" ColumnSpacing="0" IsVisible="{Binding Board.IsRecordingRide}"><Grid.Behaviors><behaviors:TouchBehavior Command="{Binding StopRecordRideCommand}" /></Grid.Behaviors>
                         <Image Grid.Row="0" Grid.Column="0" Source="settings_stop_recording" WidthRequest="24" HeightRequest="24" HorizontalOptions="Center" />
                         <Label Grid.Row="0" Grid.Column="1" Text="Stop recording ride" TextColor="Black" FontSize="18"/>
                     </Grid>
@@ -101,7 +101,7 @@
 
         <ScrollView>
             <StackLayout Spacing="16" Margin="0,16,0,0">
-                <views:SpeedRangeDistanceView x:Name="SpeedRangeDistanceView" HeightRequest="180" RPM="{Binding RPM}" WheelCircumference="{Binding WheelCircumference}" LifetimeOdometer="{Binding LifetimeOdometer}" TripOdometer="{Binding TripOdometer}" />
+                <views:SpeedRangeDistanceView x:Name="SpeedRangeDistanceView" RPM="{Binding RPM}" WheelCircumference="{Binding WheelCircumference}" LifetimeOdometer="{Binding LifetimeOdometer}" TripOdometer="{Binding TripOdometer}" />
                 <views:BatteryView BindingContext="{Binding .}"  BoardType="{Binding BoardType}" BatteryPercent="{Binding BatteryPercent}" BatteryVoltage="{Binding BatteryVoltage}" BatteryCells="{Binding BatteryCells}"  />
                 <views:PowerView BindingContext="{Binding .}" CurrentAmps="{Binding CurrentAmps}" IsRegen="{Binding IsRegen}" TripAmpHours="{Binding TripAmpHours}" TripRegenAmpHours="{Binding TripRegenAmpHours}" />
                 <views:TemperatureView x:Name="TemperatureView" BindingContext="{Binding .}" ControllerTemp="{Binding ControllerTemperature}" MotorTemp="{Binding MotorTemperature}" BatteryTemp="{Binding BatteryTemperature}" />

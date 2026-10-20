@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:OWCE.Pages"    
-    xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:behaviors="clr-namespace:OWCE.Behaviors" xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="OWCE.Pages.AboutPage"
     x:DataType="pages:AboutPage"
     Title="About"
@@ -28,14 +28,14 @@
 
         <Label Grid.Row="3" Text="Links:" FontAttributes="Bold" />
         <Grid Grid.Row="4" RowSpacing="5" Margin="16,0,0,0">
-            <Label Grid.Row="0" Text="OWCE FAQ" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding FAQCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="1" Text="GitHub (Source code)" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding SourceCodeCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="2" Text="Report a problem" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding ReportProblemCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="3" Text="Request a feature" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding RequestFeatureCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="4" Text="Reddit" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding RedditCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="5" Text="Twitter" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding TwitterCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="6" Text="Facebook page (for news)" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding FacebookPageCommand}" /></Label.Behaviors></Label>
-            <Label Grid.Row="7" Text="Facebook group (for discussions)" TextDecorations="Underline"><Label.Behaviors><xcte:TouchBehavior Command="{Binding FacebookGroupCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="0" Text="OWCE FAQ" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding FAQCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="1" Text="GitHub (Source code)" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding SourceCodeCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="2" Text="Report a problem" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding ReportProblemCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="3" Text="Request a feature" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding RequestFeatureCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="4" Text="Reddit" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding RedditCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="5" Text="Twitter" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding TwitterCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="6" Text="Facebook page (for news)" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding FacebookPageCommand}" /></Label.Behaviors></Label>
+            <Label Grid.Row="7" Text="Facebook group (for discussions)" TextDecorations="Underline"><Label.Behaviors><behaviors:TouchBehavior Command="{Binding FacebookGroupCommand}" /></Label.Behaviors></Label>
         </Grid>
     </Grid>
 </pages:BaseContentPage>

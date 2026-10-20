@@ -22,7 +22,7 @@ Open Source Project by [@beeradmoore](http://www.twitter.com/beeradmoore)
 
 ## How to build and run this project. 
 
-The app is a .NET MAUI single project targeting .NET 10. Install the [.NET 10 SDK](https://dotnet.microsoft.com/download) and the MAUI workload (`dotnet workload install maui`), then:
+The app is a .NET MAUI single project targeting .NET 10. Install the [.NET 10 SDK](https://dotnet.microsoft.com/download) and the MAUI workload pinned to the version CI uses (`dotnet workload install maui --version 10.0.402`; iOS builds need Xcode 27.0 to match it), then:
 
     dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-android    # Android
     dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-ios        # iOS (requires macOS + Xcode)

@@ -5,6 +5,7 @@
     xmlns:pages="clr-namespace:Mopups.Pages;assembly=Mopups"
     xmlns:animations="clr-namespace:Mopups.Animations;assembly=Mopups"
     x:Class="OWCE.Pages.Popup.Alert"
+    HasSystemPadding="False"
     CloseWhenBackgroundIsClicked="true"
     BackgroundColor="#BF000000">
 

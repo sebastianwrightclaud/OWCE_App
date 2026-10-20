@@ -160,14 +160,17 @@ namespace OWCE.Pages
 
         async void Disconnect_Tapped(System.Object sender, System.EventArgs e)
         {
-            var result = await DisplayActionSheet("Are you sure you want to disconnect?", "Cancel", "Disconnect");
-
-            if (result == "Disconnect")
+            // Popups live in their own window above the page, so close the side menu
+            // first or it would cover the confirmation.
+            if (MopupService.Instance.PopupStack.Any())
             {
-                if (MopupService.Instance.PopupStack.Any())
-                {
-                    await MopupService.Instance.PopAllAsync();
-                }
+                await MopupService.Instance.PopAllAsync();
+            }
+
+            var disconnect = await DisplayAlert("Disconnect", "Are you sure you want to disconnect?", "Disconnect", "Cancel");
+
+            if (disconnect)
+            {
                 await DisconnectAndPop();
             }
         }

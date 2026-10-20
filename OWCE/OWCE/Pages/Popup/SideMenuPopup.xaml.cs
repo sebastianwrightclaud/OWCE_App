@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Mopups.Pages;
 using Mopups.Services;
@@ -97,10 +98,41 @@ namespace OWCE.Pages.Popup
             {
                 if (DeviceInfo.Platform == DevicePlatform.iOS)
                 {
-                    var safeInsets = On<iOS>().SafeAreaInsets();
+                    var safeInsets = GetSafeAreaInsets();
                     grid.Padding = new Thickness(0, safeInsets.Top, 0, safeInsets.Bottom);
                 }
             }
+        }
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+
+            // Leave a strip on the right so the page behind (and the close button) stays reachable.
+            if (width > 0)
+            {
+                MainGrid.WidthRequest = Math.Min(500, width - MainGrid.Margin.Right);
+            }
+        }
+
+        Thickness GetSafeAreaInsets()
+        {
+            var insets = On<iOS>().SafeAreaInsets();
+#if IOS
+            // MAUI only populates the page-specific insets when UseSafeArea is on, so fall back to the window.
+            if (insets.Top == 0)
+            {
+                var window = UIKit.UIApplication.SharedApplication.ConnectedScenes
+                    .OfType<UIKit.UIWindowScene>()
+                    .SelectMany(scene => scene.Windows)
+                    .FirstOrDefault(w => w.IsKeyWindow);
+                if (window != null)
+                {
+                    insets = new Thickness(0, window.SafeAreaInsets.Top, 0, window.SafeAreaInsets.Bottom);
+                }
+            }
+#endif
+            return insets;
         }
     }
 }

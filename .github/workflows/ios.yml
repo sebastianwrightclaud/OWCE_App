@@ -25,13 +25,14 @@ on:
 
 env:
   # Each .NET for iOS release requires one exact Xcode version, so the SDK,
-  # workload set and Xcode are pinned together. Workload set 10.0.401 ships
-  # .NET for iOS 26.5.10318, which requires Xcode 26.6; later 10.0.4xx sets
-  # require Xcode 27.x, which the macos-26 runner image does not have.
+  # workload set and Xcode are pinned together. Workload set 10.0.402 ships
+  # .NET for iOS 27.0.10722, which requires Xcode 27.0, so the iOS jobs run on
+  # the xcode-27 runner image (macos-26 tops out at Xcode 26.6). These match
+  # the local toolchain the app is tested with on device.
   # Bump all three together (see https://github.com/dotnet/macios/releases).
-  DOTNET_VERSION: '10.0.401'
-  DOTNET_WORKLOAD_VERSION: '10.0.401'
-  XCODE_VERSION: '26.6'
+  DOTNET_VERSION: '10.0.402'
+  DOTNET_WORKLOAD_VERSION: '10.0.402'
+  XCODE_VERSION: '27.0'
   PROJECT: OWCE/OWCE/OWCE.csproj
 
 jobs:
@@ -67,10 +68,10 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.PROJECT }} -f net10.0-android -c Release -p:AcceptAndroidSDKLicenses=true
 
-  # Unsigned iOS build – proves the net10.0-ios head compiles with the iOS 26 SDK.
+  # Unsigned iOS build – proves the net10.0-ios head compiles with the iOS 27 SDK.
   build-ios:
     name: iOS (net10.0-ios, unsigned)
-    runs-on: macos-26
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -97,7 +98,7 @@ jobs:
     name: TestFlight deploy
     if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.deploy_to_testflight)
     needs: build-ios
-    runs-on: macos-26
+    runs-on: xcode-27
     environment: testflight
     steps:
       - uses: actions/checkout@v4

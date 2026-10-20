@@ -5,9 +5,10 @@
     xmlns:pages="clr-namespace:Mopups.Pages;assembly=Mopups"
     xmlns:animations="clr-namespace:Mopups.Animations;assembly=Mopups"
     xmlns:popup="clr-namespace:OWCE.Pages.Popup"
-    xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:behaviors="clr-namespace:OWCE.Behaviors" xmlns:xcte="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="OWCE.Pages.Popup.ProgressAlert"
     x:DataType="popup:ProgressAlert"
+    HasSystemPadding="False"
     CloseWhenBackgroundIsClicked="false"
     BackgroundColor="#BF000000">
 
@@ -33,7 +34,7 @@
                     <ActivityIndicator Grid.Column="1" IsRunning="True" Color="Black" WidthRequest="26" HeightRequest="26" VerticalOptions="Center" />
                 </Grid>
                 <Grid Grid.Row="3" BackgroundColor="White" HeightRequest="76">
-                    <Button Text="{Binding ButtonText}" Style="{StaticResource RoundButtonStyle}" Command="{Binding ActionButtonCommand}"><Button.Behaviors><xcte:TouchBehavior /></Button.Behaviors></Button>
+                    <Button Text="{Binding ButtonText}" Style="{StaticResource RoundButtonStyle}" Command="{Binding ActionButtonCommand}"><Button.Behaviors><behaviors:TouchBehavior /></Button.Behaviors></Button>
                 </Grid>
             </Grid>
         </Border>

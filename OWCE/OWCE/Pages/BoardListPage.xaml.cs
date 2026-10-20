@@ -167,6 +167,24 @@ namespace OWCE.Pages
         bool _hasAppeared = false;
         Grid _sideMenuItem;
 
+        static Task WaitForRootPageHandlerAsync()
+        {
+            var rootPage = App.Current?.Windows.FirstOrDefault()?.Page;
+            if (rootPage == null || rootPage.Handler != null)
+                return Task.CompletedTask;
+
+            var tcs = new TaskCompletionSource();
+            void OnHandlerChanged(object sender, EventArgs e)
+            {
+                if (rootPage.Handler == null)
+                    return;
+                rootPage.HandlerChanged -= OnHandlerChanged;
+                tcs.TrySetResult();
+            }
+            rootPage.HandlerChanged += OnHandlerChanged;
+            return tcs.Task;
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -206,6 +224,10 @@ namespace OWCE.Pages
                 App.Current.OWBLE.BoardDiscovered += OWBLE_BoardDiscovered;
 
                 // If this is the first launch of the current app we want to re-alert the user that this is a community driven app.
+                // Mopups attaches popups via the root page's handler. With the iOS scene
+                // lifecycle OnAppearing can fire before that handler exists.
+                await WaitForRootPageHandlerAsync();
+
                 if (VersionTracking.IsFirstLaunchForCurrentVersion)
                 {
                     var alert = new Popup.Alert("Onewheel Community Edition", "This is a third party app made by the community, for the community. Its aim is to bring additional safety features & better data reporting to its users.\nThis is not the official Onewheel app. It is not supported, endorsed or affiliated with Future Motion in any way.")
