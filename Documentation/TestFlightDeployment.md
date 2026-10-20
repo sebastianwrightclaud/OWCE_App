@@ -118,9 +118,18 @@ compliance questionnaire blocks each build.
 
 - **"No profiles found" / signing errors** – the profile's bundle ID,
   certificate, and the `IOS_*` variables must all match each other.
+- **"This version of .NET for iOS requires Xcode X"** – every .NET for iOS
+  release requires one exact Xcode version. The workflow pins the .NET SDK,
+  the workload set and Xcode together (`DOTNET_VERSION`,
+  `DOTNET_WORKLOAD_VERSION` and `XCODE_VERSION` at the top of
+  `.github/workflows/ios.yml`). To upgrade, pick a workload set from the
+  [.NET for iOS release notes](https://github.com/dotnet/macios/releases)
+  whose required Xcode is installed on the runner image, and bump all three
+  values together.
 - **Upload rejected for SDK version** – Apple raises the minimum SDK every
-  April; if that happens, bump the runner image / .NET version in
-  `.github/workflows/ios.yml`.
-- **The unsigned `build-ios` job fails** – that's a code problem, not a
-  signing problem; fix the build first, deployment only needs the steps
-  above once CI is green.
+  April. When that happens, move to a runner image with the newer Xcode and
+  bump the three pinned versions above to match.
+- **The unsigned `build-ios` job fails** – if the error mentions Xcode, see
+  the first item above. Otherwise it's a code problem, not a signing
+  problem: fix the build first. Deployment only needs the steps above once
+  CI is green.

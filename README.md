@@ -27,7 +27,7 @@ The app is a .NET MAUI single project targeting .NET 10. Install the [.NET 10 SD
     dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-android    # Android
     dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-ios        # iOS (requires macOS + Xcode)
 
-`-f net10.0` builds the shared code on any OS without the mobile workloads. CI builds all targets on every push (see `.github/workflows/ios.yml`), and TestFlight deployment is documented in [Documentation/TestFlightDeployment.md](Documentation/TestFlightDeployment.md).
+`-f net10.0` builds the shared code on any OS without the mobile workloads. Each .NET for iOS release requires one exact Xcode version; CI pins the .NET SDK, workload set and Xcode together at the top of `.github/workflows/ios.yml`, so match those locally (`dotnet workload install maui --version <workload set>`) if your iOS build complains about the Xcode version. CI builds all targets on every push (see `.github/workflows/ios.yml`), and TestFlight deployment is documented in [Documentation/TestFlightDeployment.md](Documentation/TestFlightDeployment.md).
 
 NOTE: Because the app depends on the Onewheels low-energy Bluetooth, it will not function correctly in a simulator/emulator. For best results, deploy to a physical device. 
 

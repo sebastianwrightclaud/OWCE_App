@@ -24,7 +24,14 @@ on:
         required: false
 
 env:
-  DOTNET_VERSION: '10.0.x'
+  # Each .NET for iOS release requires one exact Xcode version, so the SDK,
+  # workload set and Xcode are pinned together. Workload set 10.0.401 ships
+  # .NET for iOS 26.5.10318, which requires Xcode 26.6; later 10.0.4xx sets
+  # require Xcode 27.x, which the macos-26 runner image does not have.
+  # Bump all three together (see https://github.com/dotnet/macios/releases).
+  DOTNET_VERSION: '10.0.401'
+  DOTNET_WORKLOAD_VERSION: '10.0.401'
+  XCODE_VERSION: '26.6'
   PROJECT: OWCE/OWCE/OWCE.csproj
 
 jobs:
@@ -38,7 +45,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Install MAUI workloads
-        run: dotnet workload install maui-android maui-tizen
+        run: dotnet workload install maui-android maui-tizen --version ${{ env.DOTNET_WORKLOAD_VERSION }}
       - name: Build
         run: dotnet build ${{ env.PROJECT }} -f net10.0 -c Release
 
@@ -52,7 +59,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Install MAUI workloads
-        run: dotnet workload install maui-android maui-tizen
+        run: dotnet workload install maui-android maui-tizen --version ${{ env.DOTNET_WORKLOAD_VERSION }}
       - uses: actions/setup-java@v4
         with:
           distribution: 'microsoft'
@@ -69,8 +76,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Select Xcode
+        run: sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
       - name: Install MAUI workloads
-        run: dotnet workload install maui
+        run: dotnet workload install maui --version ${{ env.DOTNET_WORKLOAD_VERSION }}
       - name: Show toolchain
         run: |
           xcodebuild -version
@@ -95,8 +104,10 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Select Xcode
+        run: sudo xcode-select -s "/Applications/Xcode_${XCODE_VERSION}.app"
       - name: Install MAUI workloads
-        run: dotnet workload install maui
+        run: dotnet workload install maui --version ${{ env.DOTNET_WORKLOAD_VERSION }}
 
       - name: Check required secrets
         env:
