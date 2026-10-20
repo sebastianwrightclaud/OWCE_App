@@ -10,7 +10,7 @@ The user wants to rebuild the Onewheel Community Edition (OWCE) iOS app and ship
 
 - **Repo:** `sebastianwrightclaud/OWCE_App`. This is the user's fork of `OnewheelCommunityEdition/OWCE_App`.
 - **`main` is at `09708c7`.** It has the complete migration. The working branch `claude/ios-testflight-deployment-64e0ip` was fast-forwarded into main and is identical to it. Work on main or on a new branch.
-- **CI:** the workflow is `.github/workflows/ios.yml`. Runs 3 and 4 on the branch were fully green. When this handoff was written, the first run on main (run `39360773351`) had passed the shared-code job, and the Android and iOS jobs were still building. **Check that run's result first.** The code is identical to the green runs, so a failure would point to drift in the runner image or the .NET workloads, not to the code.
+- **CI:** the workflow is `.github/workflows/ios.yml`. The first run on main (run `39360773351`) failed in the iOS job because of toolchain drift, not code: CI had floated to .NET SDK 10.0.402, whose iOS workload requires Xcode 27.1, and the runner only has Xcode up to 26.6. Commit `a2d5e61` fixes this by pinning the SDK, workload set and Xcode together (see gotcha 8). **Check that the latest run on main is green.**
 - **Not done yet, and it needs the user, not you:** the one-time Apple Developer and App Store Connect setup, plus adding the GitHub secrets. Until then, the TestFlight deploy job fails fast with a "Missing repository secrets" error. That is expected.
 - **Never run on a device.** Everything has been verified at the compile level only.
 
@@ -54,7 +54,7 @@ The `net10.0` TFM (no platform) is a compile-check target. It builds all the sha
 You need the .NET 10 SDK.
 
 ```sh
-dotnet workload install maui            # on macOS; on Linux: maui-android maui-tizen
+dotnet workload install maui --version 10.0.401   # on macOS with Xcode 26.6; on Linux: maui-android maui-tizen
 dotnet build OWCE/OWCE/OWCE.csproj -f net10.0 -c Release          # fast shared-code check, any OS
 dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-android -c Release  # needs Android SDK
 dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-ios -c Release -p:RuntimeIdentifier=ios-arm64 -p:EnableCodeSigning=false  # macOS + Xcode 26
@@ -74,6 +74,7 @@ To run on a connected iPhone from a Mac, you need a development signing identity
 5. **Building `net10.0` on Linux needs the `maui-tizen` workload**, oddly enough. CI installs `maui-android maui-tizen` for the Linux jobs.
 6. **NU1903 warning on SQLitePCLRaw 2.1.11.** There's an advisory (GHSA-2m69-gcr7-jv3q), but 2.1.11 is the newest stable release. It's overridden explicitly in the csproj, so bump it when a fixed version ships.
 7. **`Info.plist` deliberately leaves out** the bundle ID, version, icon and launch-screen keys. MAUI injects those from the csproj (`ApplicationId`, `ApplicationDisplayVersion`, `ApplicationVersion`, `MauiIcon`, `MauiSplashScreen`). `ITSAppUsesNonExemptEncryption=false` is set so TestFlight doesn't ask the export-compliance question on every build.
+8. **CI pins the .NET SDK (10.0.401), workload set (10.0.401) and Xcode (26.6) together**, at the top of `ios.yml`. Each .NET for iOS release requires one exact Xcode version, so letting the SDK float silently broke the iOS build once already. Workload set 10.0.401 is the newest .NET 10 set that still targets Xcode 26 (it ships .NET for iOS 26.5.10318, which requires Xcode 26.6); every later 10.0.4xx set requires Xcode 27.x. To upgrade, check the [.NET for iOS release notes](https://github.com/dotnet/macios/releases) for the required Xcode, confirm the runner image has it, and bump all three values together. Locally on a Mac, install the matching workload with `dotnet workload install maui --version 10.0.401` if you have Xcode 26.6, or pick the workload set that matches your own Xcode.
 
 ## CI / TestFlight workflow (`.github/workflows/ios.yml`)
 
@@ -105,7 +106,7 @@ These need a device, or the user's judgement:
 
 ## Suggested next steps
 
-1. Confirm CI run `39360773351` on main is green. If it isn't, fix it, re-verify with a Release build, and push.
+1. Confirm the latest CI run on main is green. If it isn't, fix it, re-verify with a Release build, and push.
 2. Help the user through `Documentation/TestFlightDeployment.md`. They need an Apple Developer account, their own bundle ID, a distribution certificate (.p12), an App Store provisioning profile, an App Store Connect API key, and the GitHub secrets and variables.
 3. Trigger the deploy from Actions → *iOS build and TestFlight* → Run workflow, with *deploy_to_testflight* checked. Debug the first signed build and upload.
 4. Install from TestFlight and work through the runtime checklist above with a real board. Fix whatever turns up.
