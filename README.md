@@ -17,8 +17,8 @@ Written in C# with [.NET MAUI](https://dotnet.microsoft.com/apps/maui)
 Open Source Project by [@beeradmoore](http://www.twitter.com/beeradmoore) 
 
 ## Available (soon) for free on:
-* Android and WearOS: Available on Google Play
-* iPhone and Apple Watch: Available on App Store
+* Android: Available on Google Play
+* iPhone: Available on App Store (the Apple Watch companion app is not currently supported, see [Documentation/WatchApplication.md](Documentation/WatchApplication.md))
 
 ## How to build and run this project. 
 
@@ -28,6 +28,7 @@ The app is a .NET MAUI single project targeting .NET 10. Install the [.NET 10 SD
     dotnet build OWCE/OWCE/OWCE.csproj -f net10.0-ios        # iOS (requires macOS + Xcode)
 
 `-f net10.0` builds the shared code on any OS without the mobile workloads. CI builds all targets on every push (see `.github/workflows/ios.yml`), and TestFlight deployment is documented in [Documentation/TestFlightDeployment.md](Documentation/TestFlightDeployment.md).
+
 NOTE: Because the app depends on the Onewheels low-energy Bluetooth, it will not function correctly in a simulator/emulator. For best results, deploy to a physical device. 
 
 
