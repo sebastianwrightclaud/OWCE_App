@@ -46,6 +46,8 @@
 	<false/>
 	<key>UIUserInterfaceStyle</key>
 	<string>Light</string>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/appicon.appiconset</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
